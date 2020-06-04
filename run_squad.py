@@ -870,6 +870,14 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
             _NbestPrediction(
                 text="", start_logit=null_start_logit,
                 end_logit=null_end_logit))
+    
+    # TODO(aitingliu): https://github.com/google-research/bert/issues/476
+    # In very rare edge cases we could only have single null prediction.
+    # So we just create a nonce prediction in this case to avoid failure.
+    if len(nbest) == 1:
+        nbest.insert(0,
+                     _NbestPrediction(text="empty", start_logit=0.0, end_logit=0.0))
+
     # In very rare edge cases we could have no valid predictions. So we
     # just create a nonce prediction in this case to avoid failure.
     if not nbest:
@@ -906,6 +914,14 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
       score_diff = score_null - best_non_null_entry.start_logit - (
           best_non_null_entry.end_logit)
       scores_diff_json[example.qas_id] = score_diff
+      # TODO(aitingliu): https://github.com/google-research/bert/issues/476
+      if best_non_null_entry:
+        score_diff = score_null - best_non_null_entry.start_logit - (
+          best_non_null_entry.end_logit)
+        scores_diff_json[example.qas_id] = score_diff
+      else:
+        # all n best entries are null, we assign a higher diff than threshold
+        score_diff = FLAGS.null_score_diff_threshold + 1.0
       if score_diff > FLAGS.null_score_diff_threshold:
         all_predictions[example.qas_id] = ""
       else:

@@ -1,4 +1,9 @@
 # Initially taken from Github's Python gitignore file
+shell_dir/
+my_shell_dir/
+lic_shell_dir/
+.idea/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
