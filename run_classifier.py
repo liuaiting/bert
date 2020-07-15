@@ -21,10 +21,12 @@ from __future__ import print_function
 import collections
 import csv
 import os
+import random
 import modeling
 import optimization
 import tokenization
 import tensorflow as tf
+import numpy as np
 
 flags = tf.flags
 
@@ -45,6 +47,9 @@ flags.DEFINE_string("task_name", None, "The name of the task to train.")
 
 flags.DEFINE_string("vocab_file", None,
                     "The vocabulary file that the BERT model was trained on.")
+
+flags.DEFINE_string("output_predict_dir", None,
+                    "The output file dir where the eval results will be written.")
 
 flags.DEFINE_string(
     "output_dir", None,
@@ -122,6 +127,12 @@ tf.flags.DEFINE_string("master", None, "[Optional] TensorFlow master URL.")
 flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
+
+
+# TODO: set random seed
+random.seed(FLAGS.seed)
+np.random.seed(FLAGS.seed)
+tf.set_random_seed(FLAGS.seed)
 
 
 class InputExample(object):
@@ -956,7 +967,7 @@ def main(_):
 
     result = estimator.predict(input_fn=predict_input_fn)
 
-    output_predict_file = os.path.join(FLAGS.output_dir, "test_results.tsv")
+    output_predict_file = os.path.join(FLAGS.output_predict_dir, "test_results.tsv")
     with tf.gfile.GFile(output_predict_file, "w") as writer:
       num_written_lines = 0
       tf.logging.info("***** Predict results *****")

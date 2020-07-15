@@ -28,6 +28,7 @@ import optimization
 import tokenization
 import six
 import tensorflow as tf
+import numpy as np
 
 flags = tf.flags
 
@@ -171,6 +172,12 @@ flags.DEFINE_bool(
 flags.DEFINE_float(
     "null_score_diff_threshold", 0.0,
     "If null_score - best_non_null is greater than the threshold predict null.")
+
+
+# TODO: set random seed
+random.seed(FLAGS.seed)
+np.random.seed(FLAGS.seed)
+tf.set_random_seed(FLAGS.seed)
 
 
 class SquadExample(object):
@@ -1375,9 +1382,9 @@ def main(_):
               start_logits=start_logits,
               end_logits=end_logits))
 
-    output_prediction_file = os.path.join(FLAGS.output_dir, "predictions.json")
-    output_nbest_file = os.path.join(FLAGS.output_dir, "nbest_predictions.json")
-    output_null_log_odds_file = os.path.join(FLAGS.output_dir, "null_odds.json")
+    output_prediction_file = os.path.join(predict_file_path, "predictions.json")
+    output_nbest_file = os.path.join(predict_file_path, "nbest_predictions.json")
+    output_null_log_odds_file = os.path.join(predict_file_path, "null_odds.json")
 
     write_predictions(eval_examples, eval_features, all_results,
                       FLAGS.n_best_size, FLAGS.max_answer_length,
