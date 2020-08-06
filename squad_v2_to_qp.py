@@ -71,7 +71,7 @@ def qp_doc_metric(qp_file, qp_res_file, qp_doc_res_file, threshold):
       qp_file         : `label query para  qid`
       qp_res_file     : `p0  p1`
       qp_doc_res_file : `para_id  label	pred	p1`
-    """
+  """
   logger.info("***** Running qp_doc_metric *****")
   logger.info("qp_file: {}".format(qp_file))
   logger.info("qp_res_file: {}".format(qp_res_file))
@@ -112,8 +112,9 @@ def qp_doc_metric(qp_file, qp_res_file, qp_doc_res_file, threshold):
 def qp_pair_metric(qp_file, qp_res_file, qp_pair_res_file, threshold):
   """
     pair级别指标.
-    [test data format]: label\tquery\tpara\tqid
-    [prediction file format]: 0_prob\t1_prob
+    qp_file           : `label  query para  qid`
+    qp_res_file       : `0_prob 1_prob`
+    qp_pair_res_file  : `para_id  qid label pred  p1  query para`
   """
   logger.info("***** Running qp_pair_metric *****")
   logger.info("qp_file: {}".format(qp_file))
@@ -149,5 +150,5 @@ def qp_pair_metric(qp_file, qp_res_file, qp_pair_res_file, threshold):
   print("\n")
   df.to_csv(qp_pair_res_file, sep="\t", index=False, encoding="utf-8",
             columns=["para_id", "qid", "label", "pred", "p1", "query", "para"])
-  logger.info("***** Done qp_pair_res_file *****")
+  logger.info("***** Done qp_pair_metric *****")
 
