@@ -59,10 +59,6 @@ flags.DEFINE_string("vocab_file", None,
                     "The vocabulary file that the BERT model was trained on.")
 
 flags.DEFINE_string(
-    "output_predict_dir", None,
-    "The output directory where the predict results will be written.")
-
-flags.DEFINE_string(
     "output_dir", None,
     "The output directory where the model checkpoints will be written.")
 
@@ -75,6 +71,10 @@ flags.DEFINE_string(
     "The exported model version.")
 
 ## Other parameters
+
+# TODO: add random seed flag
+flags.DEFINE_integer(
+    "seed", 12345, "Random seed.")
 
 flags.DEFINE_string(
     "init_checkpoint", None,
@@ -156,10 +156,6 @@ np.random.seed(FLAGS.seed)
 tf.set_random_seed(FLAGS.seed)
 
 
-if not FLAGS.output_predict_dir:
-  FLAGS.output_predict_dir = FLAGS.output_dir
-
-
 class InputExample(object):
   """A single training/test example for simple sequence classification."""
 
@@ -238,7 +234,7 @@ class DataProcessor(object):
 
 
 class QpMatchProcessor(DataProcessor):
-  """Processor for qa-match dataSet."""
+  """Processor for qp-match dataSet."""
 
   def get_train_examples(self, data_dir):
     """See base class."""
@@ -871,7 +867,7 @@ def main(_):
   processors = {
       "sentence_pair": SentencePairClassificationProcessor,
       "lcqmc_pair": LCQMCPairClassificationProcessor,
-      "qp_match": QpMatchProcessor
+      "qp_pair": QpMatchProcessor
   }
 
   tokenization.validate_case_matches_checkpoint(FLAGS.do_lower_case,
@@ -1078,7 +1074,7 @@ def main(_):
 
     result = estimator.predict(input_fn=predict_input_fn)
 
-    output_predict_file = os.path.join(FLAGS.output_predict_dir, "test_results.tsv")
+    output_predict_file = os.path.join(FLAGS.output_dir, "test_results.tsv")
     with tf.gfile.GFile(output_predict_file, "w") as writer:
       num_written_lines = 0
       tf.logging.info("***** Predict results *****")

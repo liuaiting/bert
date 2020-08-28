@@ -1,7 +1,7 @@
 # Initially taken from Github's Python gitignore file
 shell_dir/
-my_shell_dir/
-lic_shell_dir/
+mrc_shell_dir/
+qp_shell_dir/
 .idea/
 
 
